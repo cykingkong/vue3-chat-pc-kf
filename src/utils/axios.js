@@ -6,7 +6,7 @@ export { SERVICE_URL }
 
 // request 请求之前
 axios.interceptors.request.use((config) => {
-  config.headers['x-token'] = localStorage.getItem('x-token')
+  config.headers['Authorization'] = `Bearer ${localStorage.getItem('x-token')}`
   return config
 })
 
@@ -112,7 +112,7 @@ export default class Http {
     const config = {
       url: urlParams,
       params: {
-        randomTime: new Date().getTime(),
+        // randomTime: new Date().getTime(),
       },
     }
     return Http.send(config, loading)
@@ -124,7 +124,7 @@ export default class Http {
       url: SERVICE_URL + url,
       data: params,
       params: {
-        randomTime: new Date().getTime(),
+        // randomTime: new Date().getTime(),
       },
     }
     return Http.send(config, loading)

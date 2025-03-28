@@ -4,8 +4,11 @@ export default {
   group() {
     return Http.get('/api/v1/chat-list/group')
   },
-  privateList() {
-    return Http.get('/api/v1/chat-list/list/private')
+  privateList(params) {
+    return Http.get('kfapi/chat/consultList',params)
+  },
+  kfUserList(params) {
+    return Http.get('kfapi/user/kfUserList',params)
   },
   create(param) {
     return Http.post('/api/v1/chat-list/create', param)

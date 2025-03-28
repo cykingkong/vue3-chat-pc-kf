@@ -3,6 +3,7 @@ import Chat from '@/views/ChatPage.vue'
 import Login from '@/views/LoginPage.vue'
 import ws from '@/utils/ws.js'
 
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -19,9 +20,9 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   let token = window.localStorage.getItem('x-token')
-  if (token) ws.connect(token)
+ 
   if (!token && to.path !== '/login') {
     next({ path: '/login' })
     return

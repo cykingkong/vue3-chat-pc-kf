@@ -10,10 +10,10 @@ let reconnectCount = 0
 let isConnect = false
 
 function response(event) {
-  if (event.type !== 'message') {
-    onCloseHandler()
-    return
-  }
+  // if (event.type !== 'message') {
+  //   onCloseHandler()
+  //   return
+  // }
   let wsContent
   try {
     wsContent = JSON.parse(event.data)
@@ -21,18 +21,18 @@ function response(event) {
     onCloseHandler()
     return
   }
-  if (wsContent.type) {
-    if (wsContent.data && wsContent.data.code === -1) {
+  if (wsContent) {
+    if (wsContent.code !== 200) {
       onCloseHandler()
     } else {
-      switch (wsContent.type) {
-        case 'msg': {
+      switch (wsContent.action) {
+        case 'userMsg': {
           EventBus.emit('on-receive-msg', wsContent.content)
           break
         }
-        case 'notify': {
-          wsContent.content.content = JSON.parse(wsContent.content?.content)
-          EventBus.emit('on-receive-notify', wsContent.content)
+        case 'KfLogin': {
+          localStorage.setItem('kfUuid',wsContent.data.uuId)
+          EventBus.emit('on-receive-notify', wsContent.data)
           break
         }
         case 'video': {
@@ -42,6 +42,19 @@ function response(event) {
         case 'file': {
           EventBus.emit('on-receive-file', wsContent.content)
           break
+        }
+      }
+      // 回复消息
+      switch(wsContent.msgType){
+        case 'message.userMsg':{
+          console.log(wsContent.data.msg,'msg')
+          EventBus.emit('on-receive-msg', wsContent.data)
+          break;
+        }
+        case 'message.consultList':{
+          console.log(wsContent.data,'message.consultList')
+          EventBus.emit('on-reload-list', wsContent.data)
+          break;
         }
       }
     }
@@ -56,10 +69,20 @@ function connect(tokenStr) {
   token = tokenStr
   try {
     const wsIp = import.meta.env.VITE_WS_URL
-    ws = new WebSocket(wsIp + '/ws?x-token=' + token)
+    ws = new WebSocket(wsIp )
 
     ws.onopen = () => {
-      console.log('Connected to server')
+      console.log('Connected to server',ws)
+      let kfLogingParams = {
+        action: 'KfLogin',
+        params: {
+          token: `${localStorage.getItem('x-token')}`,
+        }
+      }
+      if(ws){
+        ws.send(JSON.stringify(kfLogingParams))
+      }
+
       clearTimer()
       sendHeartPack()
     }
@@ -78,11 +101,17 @@ function send(msg) {
 
 const sendHeartPack = () => {
   heartTimer = setInterval(() => {
-    send('heart')
-  }, 9900)
+    send(JSON.stringify({
+      "action": "Ping",
+      "params": {
+          "uuId": localStorage.getItem('kfUuid')||''
+      }
+  }))
+  },5000)
 }
 
 const onCloseHandler = () => {
+  console.log('onCloseHandler',token )
   clearHeartPackTimer()
   if (ws) {
     ws.close()
@@ -124,6 +153,7 @@ const clearTimer = () => {
 }
 
 const disConnect = () => {
+  console.log('disConnect')
   clearHeartPackTimer()
   token = null
   if (ws) {
@@ -133,4 +163,4 @@ const disConnect = () => {
   isConnect = false
 }
 
-export default { connect, disConnect }
+export default { connect, disConnect,send }

@@ -13,8 +13,8 @@ export default {
   cancel(param) {
     return Http.post(`/api/v1/file/cancel`, param)
   },
-  invite(param) {
-    return Http.post(`/api/v1/file/invite`, param)
+  invite(data) {
+    return Http.put(`/kfapi/tool/upload`, data)
   },
   accept(param) {
     return Http.post(`/api/v1/file/accept`, param)

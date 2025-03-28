@@ -6,7 +6,7 @@
       @mouseenter="showMenu"
       @mouseleave="hideMenu"
     >
-      <div v-if="props.msg.type === MessageType.Text">
+      <div>
         <text-msg :msg="props.msg" :right="right" />
       </div>
       <div v-if="props.msg.type === MessageType.Emoji">
@@ -24,7 +24,7 @@
         @mouseenter="showMenu"
         @mouseleave="hideMenu"
       >
-        <linyu-tooltip content="引用">
+        <!-- <linyu-tooltip content="引用">
           <linyu-icon-button
             @click="handlerSetReference"
             size="24px"
@@ -34,7 +34,7 @@
         </linyu-tooltip>
         <linyu-tooltip v-if="right" content="撤回">
           <linyu-icon-button @click="onRecallMsg" size="24px" font-size="16px" icon="icon-chehui" />
-        </linyu-tooltip>
+        </linyu-tooltip> -->
         <linyu-tooltip @click="handlerCopy" content="复制">
           <linyu-icon-button size="24px" font-size="16px" icon="icon-fuzhi" />
         </linyu-tooltip>
@@ -97,22 +97,22 @@ const handlerSetReference = () => {
 }
 
 const handlerCopy = () => {
-  let msg = ''
-  if (props.msg.type === MessageType.Text) {
-    try {
-      const texts = JSON.parse(props.msg?.message)
-      texts.map((item) => {
-        if (item.type === TextContentType.At) {
-          msg += '@' + JSON.parse(item.content).name
-        } else {
-          msg += item.content
-        }
-      })
-    } catch {
-      msg = props.msg?.message
-    }
-  }
-  navigator.clipboard.writeText(msg)
+  console.log(props.msg)
+  // if (props.msg.type === MessageType.Text) {
+  //   try {
+  //     const texts = JSON.parse(props.msg?.message)
+  //     texts.map((item) => {
+  //       if (item.type === TextContentType.At) {
+  //         msg += '@' + JSON.parse(item.content).name
+  //       } else {
+  //         msg += item.content
+  //       }
+  //     })
+  //   } catch {
+  //     msg = props.msg?.message
+  //   }
+  // }
+  navigator.clipboard.writeText(props.msg.msg)
 }
 </script>
 

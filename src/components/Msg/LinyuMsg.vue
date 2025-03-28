@@ -6,22 +6,20 @@
       <recall-msg :msg="msg" />
     </template>
     <div v-else class="msg-box-wrapper" :class="{ right: right }">
-      <linyu-avatar
+      <!-- <linyu-avatar
         :info="msgStore.userListMap.get(props.msg.fromId)"
         size="40px"
         class="mr-[5px] ml-[5px]"
-      />
+      /> -->
       <div class="msg-box-info">
         <!--用户信息-->
         <div class="mgs-box-user-info" :class="{ right: right }">
           <div class="msg-username">
-            {{ msgStore.userListMap.get(props.msg.fromId).name }}
+            {{ right?msg.kfUser.nickname:user.nickname }}
           </div>
-          <div class="mgs-ip ml-[2px] mr-[2px]">
-            [{{ props.msg.fromInfo.ipOwnership ?? '未知' }}]
-          </div>
+       
           <!--用户徽章-->
-          <div v-for="(item, index) in props.user.badge" :key="index" class="flex">
+          <!-- <div v-for="(item, index) in props.user.badge" :key="index" class="flex">
             <linyu-tooltip :content="badges[item].des">
               <img
                 class="mr-[1px] ml-[1px]"
@@ -32,10 +30,10 @@
                 draggable="false"
               />
             </linyu-tooltip>
-          </div>
+          </div> -->
         </div>
         <!--消息内容-->
-        <linyu-msg-content :right="right" :msg="props.msg" />
+        <linyu-msg-content :right="right" :msg="msg" />
         <!--引用信息-->
         <div class="msg-box-info-reference" v-if="props.msg.referenceMsg" :class="{ right: right }">
           <linyu-reference-content :msg="props.msg.referenceMsg" />
@@ -69,7 +67,8 @@ const badges = {
   diamond: { icon: 'diamond.png', des: '~历久弥新~' },
 }
 
-const right = props.msg.fromId === userInfoStore.userId
+console.log(props.msg,'paraasldkjalwjd,')
+const right = props.msg.isKf || false ;
 </script>
 <style lang="less" scoped>
 .msg-box {

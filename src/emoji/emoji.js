@@ -1,6 +1,6 @@
 import emojiText from '@/emoji/emojiText.json'
-import miyoushe from '@/emoji/miyoushe.json'
 
-const emojis = [emojiText, miyoushe]
+
+const emojis = [emojiText]
 
 export default emojis

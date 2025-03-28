@@ -1,11 +1,11 @@
 <template>
   <div class="login-container">
     <div class="operations">
-      <icon-button
+      <!-- <icon-button
         @click="() => openUrl('https://space.bilibili.com/135427028/channel/series')"
         icon="icon-bilibili"
       />
-      <icon-button @click="() => openUrl('https://github.com/linyu-im')" icon="icon-github" />
+      <icon-button @click="() => openUrl('https://github.com/linyu-im')" icon="icon-github" /> -->
       <icon-button
         v-if="themeStore.theme === 'light'"
         @click="(e) => toggleDark(e, 'dark')"
@@ -19,18 +19,18 @@
     </div>
     <div class="login-bg">
       <img alt="" :src="`/poster-${themeStore.theme}.png`" class="poster-img" draggable="false" />
-      <img class="logo" alt="" :src="`/title-${themeStore.theme}.png`" draggable="false" />
+      <!-- <img class="logo" alt="" :src="`/title-${themeStore.theme}.png`" draggable="false" /> -->
       <div class="login-content">
-        <div v-if="!isVerifySuccess" class="login-box">
+        <div v-if="isVerifySuccess" class="login-box">
           <div class="title">
-            <div
+            <!-- <div
               class="text-[28px] text-[rgb(var(--text-color))] font-[600] leading-[28px] mb-[10px]"
             >
               Linyu在线聊天群
             </div>
             <div class="text-[18px] text-[rgba(var(--text-color),0.7)] leading-[20px]">
               欢迎使用林语mini
-            </div>
+            </div> -->
           </div>
           <div class="info">
             <linyu-input
@@ -44,10 +44,10 @@
             {{ !logging ? '验 证' : '登 录 中' }}
           </div>
         </div>
-        <div v-if="isVerifySuccess" class="login-box">
+        <div v-if="!isVerifySuccess" class="login-box">
           <div class="title">
             <div class="text-[28px] text-[rgb(var(--text-color))] font-[600] leading-[28px]">
-              填写个人信息
+              请输入客服账号密码
             </div>
           </div>
           <div class="info">
@@ -57,16 +57,16 @@
               placeholder="用户名"
               @keydown.enter="onLogin"
             />
-            <linyu-input v-model:value="email" placeholder="邮箱" @keydown.enter="onLogin" />
+            <linyu-input v-model:value="password" placeholder="password" @keydown.enter="onLogin" />
           </div>
           <div @click="onLogin" :class="['login-button', { logging: logging }]">
             {{ !logging ? '进 入' : '请 等 待' }}
           </div>
         </div>
-        <div class="web-info">
+        <!-- <div class="web-info">
           <div class="text-[rgba(var(--text-color),0.7)]">Author : Heath</div>
           <div class="text-[rgba(var(--text-color),0.7)]">QQ群 : 729158695</div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -91,8 +91,8 @@ const route = useRoute()
 
 const logging = ref(false)
 const isVerifySuccess = ref(false)
-const password = ref(route.query.p)
-const username = ref('')
+const password = ref('123456')
+const username = ref('kefu1')
 const email = ref('')
 const showToast = useToast()
 
@@ -104,31 +104,33 @@ const onVerifyPassword = async () => {
     showToast('密码不能为空~', true)
     return
   }
-  let keyData = await LoginApi.publicKey()
-  if (keyData.code !== 0) {
-    return
-  }
+  // let keyData = await LoginApi.publicKey()
+  // if (keyData.code !== 0) {
+  //   return
+  // }
   logging.value = true
-  const encrypt = new JSEncrypt()
-  encrypt.setPublicKey(keyData.data)
-  const encryptedPassword = encrypt.encrypt(password.value)
-  LoginApi.verify({ password: encryptedPassword })
-    .then((res) => {
-      if (res.code === 0) {
-        localStorage.setItem('x-token', res.data)
-        isVerifySuccess.value = true
-      } else {
-        showToast(res.msg, true)
-      }
-    })
-    .catch((res) => {
-      showToast(res.message, true)
-    })
-    .finally(() => {
-      logging.value = false
-    })
+  // const encrypt = new JSEncrypt()
+  // encrypt.setPublicKey(keyData.data)
+  // const encryptedPassword = encrypt.encrypt(password.value)
+  // LoginApi.verify({ password: encryptedPassword })
+  //   .then((res) => {
+  //     if (res.code === 0) {
+  //       localStorage.setItem('x-token', res.data)
+  //       isVerifySuccess.value = true
+  //     } else {
+  //       showToast(res.msg, true)
+  //     }
+  //   })
+  //   .catch((res) => {
+  //     showToast(res.message, true)
+  //   })
+  //   .finally(() => {
+  //     logging.value = false
+  //   })
 }
 const onLogin = () => {
+
+  console.log(username.value,'123')
   if (!username.value) {
     showToast('用户名不能为空~', true)
     return
@@ -138,16 +140,17 @@ const onLogin = () => {
     return
   }
   logging.value = true
-  LoginApi.login({ name: username.value, email: email.value })
-    .then((res) => {
-      if (res.code === 0) {
+  LoginApi.login({ username: username.value, password: password.value })
+    .then(async (res) => {
+      if (res.code === 200) {
         localStorage.setItem('x-token', res.data.token)
-        userInfoStore.setUserInfo({
-          userId: res.data.userId,
-          userName: res.data.userName,
-          email: res.data.email,
-          avatar: res.data.avatar,
-        })
+        await fetchUserInfo()
+        // userInfoStore.setUserInfo({
+        //   userId: res.data.userId,
+        //   userName: res.data.userName,
+        //   email: res.data.email,
+        //   avatar: res.data.avatar,
+        // })
         router.push('/')
       } else {
         showToast(res.msg, true)
@@ -159,6 +162,16 @@ const onLogin = () => {
     .finally(() => {
       logging.value = false
     })
+}
+const fetchUserInfo = async () => {
+  const res = await LoginApi.getUserInfo()
+  if (res.code === 200) {
+    console.log(res.data)
+    userInfoStore.setUserInfo({
+    ...res.data
+    })
+    console.log(userInfoStore,'123123')
+  }
 }
 </script>
 

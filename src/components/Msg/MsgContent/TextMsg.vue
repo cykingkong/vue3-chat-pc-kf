@@ -10,8 +10,16 @@
     </template>
   </span>
   <div v-else>
-    {{ props.msg.message }}
+    <p v-if="!isImage">
+    {{ props.msg.msg }}
+    </p>
+    <img
+      v-else-if="isImage && imageUrl"
+      :src="imageUrl"
+      mode="scaleToFill"
+    />
   </div>
+
 </template>
 
 <script setup>
@@ -20,13 +28,24 @@ import { TextContentType } from '@/constant/textContentType.js'
 
 const props = defineProps({ msg: Object, right: Boolean })
 const contents = ref()
+const isImage = ref(false)
+const imageUrl = ref('')
 watch(
   () => props.msg,
   () => {
     try {
-      contents.value = JSON.parse(props.msg?.message)
-    } catch {
-      contents.value = props.msg?.message
+      // contents.value = JSON.parse(props.msg?.message)
+      isImage.value = props.msg?.msg.indexOf('<img') != -1;
+      if(isImage.value){
+        console.log(props.msg?.msg)
+        imageUrl.value = props.msg?.msg.match(/src="([^"]*)"/)[1]
+      }
+
+    } catch(err) {
+      console.log(err,'catch')
+      // contents.value = props.msg?.message
+      console.log(contents.value,'pp')
+
     }
   },
   { immediate: true },
