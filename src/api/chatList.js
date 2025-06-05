@@ -19,4 +19,19 @@ export default {
   delete(param) {
     return Http.post('/api/v1/chat-list/delete', param)
   },
+  userKfQuickReplyGrid(params) {
+    return Http.get('kfapi/reply/userKfQuickReplyGrid',params)
+  },
+  userKfQuickReplyAdd(param) {
+    return Http.post('kfapi/reply/userKfQuickReplyAdd', param)
+  },
+  userKfQuickReplyDel(param) {
+    return Http.post('kfapi/reply/userKfQuickReplyDel', param)
+  },
+  userKfQuickReplyUpdate(param) {
+    return Http.post('kfapi/reply/userKfQuickReplyUpdate', param)
+  },
+  translate(param) {
+    return Http.get('kfapi/chat/translate', param)
+  },
 }

@@ -1,4 +1,5 @@
 import EventBus from '@/utils/eventBus.js'
+import { useToast } from '@/components/ToastProvider.vue'
 
 let ws = null
 let heartTimer = null
@@ -8,6 +9,7 @@ let token = null
 const reconnectCountMax = 200
 let reconnectCount = 0
 let isConnect = false
+const showToast = useToast()
 
 function response(event) {
   // if (event.type !== 'message') {
@@ -23,6 +25,7 @@ function response(event) {
   }
   if (wsContent) {
     if (wsContent.code !== 200) {
+      EventBus.emit('on-show-toast', wsContent.message)
       onCloseHandler()
     } else {
       switch (wsContent.action) {
@@ -68,6 +71,7 @@ function connect(tokenStr) {
   isConnect = true
   token = tokenStr
   try {
+    console.log(import.meta,'import.meta')
     const wsIp = import.meta.env.VITE_WS_URL
     ws = new WebSocket(wsIp )
 
@@ -111,7 +115,7 @@ const sendHeartPack = () => {
 }
 
 const onCloseHandler = () => {
-  console.log('onCloseHandler',token )
+  console.log('onCloseHandler' )
   clearHeartPackTimer()
   if (ws) {
     ws.close()

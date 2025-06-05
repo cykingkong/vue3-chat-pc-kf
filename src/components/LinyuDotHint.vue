@@ -1,6 +1,6 @@
 <template>
   <div class="dot-hint">
-    {{ props.text }}
+    <!-- {{ props.text }} -->
   </div>
 </template>
 <script setup>
@@ -11,12 +11,12 @@ const props = defineProps({
 <style lang="less" scoped>
 .dot-hint {
   padding: 0 4px;
-  min-width: 18px;
-  height: 18px;
+  min-width: 10px;
+  height: 10px;
   background: #ff4c4c;
   color: #ffffff;
   font-size: 10px;
-  line-height: 18px;
+  line-height: 10px;
   border-radius: 10px;
   text-align: center;
   margin-left: 5px;

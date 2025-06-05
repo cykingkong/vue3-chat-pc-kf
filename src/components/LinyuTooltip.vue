@@ -87,6 +87,7 @@ const calculatePosition = (event) => {
 
 const showTooltip = (event) => {
   tooltipPosition.value = calculatePosition(event)
+  if(!props.content) return 
   visible.value = true
 }
 

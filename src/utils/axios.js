@@ -3,7 +3,7 @@ import { useGlobalStore } from '@/stores/useGlobalStore.js'
 
 const SERVICE_URL = import.meta.env.VITE_HTTP_URL
 export { SERVICE_URL }
-
+console.log(SERVICE_URL, 'SERVICE_URL')
 // request 请求之前
 axios.interceptors.request.use((config) => {
   config.headers['Authorization'] = `Bearer ${localStorage.getItem('x-token')}`
@@ -13,10 +13,12 @@ axios.interceptors.request.use((config) => {
 // http response 拦截器
 axios.interceptors.response.use(
   (response) => {
+    console.log(response.data.code,'response.data.code')
     const globalStore = useGlobalStore()
     if (response.data.code === -1) {
       globalStore.setGlobalDialog(true, '认证失效', '您的登录过期，请重新登录')
     }
+    
     if (response.data.code === -3) {
       globalStore.setGlobalDialog(true, '请求失败', '您的账号已在其它地方登录，请重新登录')
     }
@@ -24,6 +26,10 @@ axios.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.data) {
+      if (error.response.data.code === 401) {
+      const globalStore = useGlobalStore()
+        globalStore.setGlobalDialog(true, '认证失效', '您的登录过期，请重新登录')
+      }
       return Promise.reject(error.response.data)
     } else {
       return Promise.reject(error.message)
@@ -57,6 +63,7 @@ export default class Http {
       url: SERVICE_URL + url,
       data: params,
     }
+    console.log(config, 'configPost')
     return Http.send(config, loading)
   }
 
@@ -115,6 +122,7 @@ export default class Http {
         // randomTime: new Date().getTime(),
       },
     }
+    console.log(config, 'configGet')
     return Http.send(config, loading)
   }
 

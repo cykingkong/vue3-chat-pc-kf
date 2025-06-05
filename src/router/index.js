@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Chat from '@/views/ChatPage.vue'
 import Login from '@/views/LoginPage.vue'
-import ws from '@/utils/ws.js'
 
 
 const router = createRouter({
@@ -22,11 +21,11 @@ const router = createRouter({
 
 router.beforeEach(async(to, from, next) => {
   let token = window.localStorage.getItem('x-token')
- 
-  if (!token && to.path !== '/login') {
-    next({ path: '/login' })
-    return
-  }
+ console.log(token,'asdlkajs')
+  // if (!token) {
+  //   next({ path: '/login' })
+  //   return
+  // }
   if ((token && to.path === '/login') || !to.matched.length) {
     next({ path: '/' })
     return

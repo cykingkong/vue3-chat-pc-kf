@@ -6,11 +6,13 @@
       <recall-msg :msg="msg" />
     </template>
     <div v-else class="msg-box-wrapper" :class="{ right: right }">
-      <!-- <linyu-avatar
-        :info="msgStore.userListMap.get(props.msg.fromId)"
+      <linyu-avatar
+        :info="{
+          avatar:right?userInfoStore.avatar:user.avatar
+        }"
         size="40px"
         class="mr-[5px] ml-[5px]"
-      /> -->
+      />
       <div class="msg-box-info">
         <!--用户信息-->
         <div class="mgs-box-user-info" :class="{ right: right }">
@@ -55,7 +57,6 @@ import { useChatMsgStore } from '@/stores/useChatMsgStore.js'
 
 const userInfoStore = useUserInfoStore()
 const msgStore = useChatMsgStore()
-
 const props = defineProps({
   msg: Object,
   user: Object,
@@ -67,7 +68,6 @@ const badges = {
   diamond: { icon: 'diamond.png', des: '~历久弥新~' },
 }
 
-console.log(props.msg,'paraasldkjalwjd,')
 const right = props.msg.isKf || false ;
 </script>
 <style lang="less" scoped>

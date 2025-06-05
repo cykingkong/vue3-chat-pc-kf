@@ -26,10 +26,10 @@
             <!-- <div
               class="text-[28px] text-[rgb(var(--text-color))] font-[600] leading-[28px] mb-[10px]"
             >
-              Linyu在线聊天群
+
             </div>
             <div class="text-[18px] text-[rgba(var(--text-color),0.7)] leading-[20px]">
-              欢迎使用林语mini
+
             </div> -->
           </div>
           <div class="info">
@@ -91,8 +91,8 @@ const route = useRoute()
 
 const logging = ref(false)
 const isVerifySuccess = ref(false)
-const password = ref('123456')
-const username = ref('kefu1')
+const password = ref('')
+const username = ref('')
 const email = ref('')
 const showToast = useToast()
 
@@ -139,6 +139,7 @@ const onLogin = () => {
     showToast('邮箱不能为空~', true)
     return
   }
+  
   logging.value = true
   LoginApi.login({ username: username.value, password: password.value })
     .then(async (res) => {
@@ -170,9 +171,29 @@ const fetchUserInfo = async () => {
     userInfoStore.setUserInfo({
     ...res.data
     })
-    console.log(userInfoStore,'123123')
   }
 }
+function GetQuery(e) {
+    let R = new RegExp(`(^|&)${e}=([^&]*)(&|$)`, 'i');
+    let n = window.location.search.substr(1).match(R);
+    let a = '';
+    return (
+      n != null && (a = decodeURIComponent(n[2])),
+      (R = null),
+      (n = null),
+      a == null || a == '' || a == 'undefined' ? '' : a
+    );
+  }
+
+
+  setTimeout( () => {
+    if(GetQuery('auth_code')){
+      localStorage.setItem('x-token',GetQuery('auth_code'))
+       fetchUserInfo()
+      
+        router.push('/')
+    }
+  },800);
 </script>
 
 <style lang="less" scoped>
