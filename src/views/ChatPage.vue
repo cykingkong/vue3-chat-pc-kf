@@ -732,12 +732,12 @@ const handleClickTranslate = async () => {
     text: `翻译为${languageList[langActive.value].label}：${translateText.value}`
 
   });
-await fetch(`https://serveronline.secmarketex.top/api/kfapi/chat/translate?${params}`, {
+
+await fetch(`${import.meta.env.VITE_HTTP_URL}kfapi/chat/translate?${params}`, {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      'Authorization': `Bearer ${localStorage.getItem('x-token')}`,
       'Accept': 'text/event-stream'
-
     },
 
   }).then(async(response) => {

@@ -119,7 +119,7 @@ const handleClickTranslate = async () => {
   const response = await fetch(`${import.meta.env.VITE_HTTP_URL}kfapi/chat/translate?${params}`, {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      'Authorization': `Bearer ${localStorage.getItem('x-token')}`,
       'Accept': 'text/event-stream'
 
     },

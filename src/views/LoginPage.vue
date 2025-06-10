@@ -73,7 +73,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref,onMounted } from 'vue'
 import { useThemeStore } from '@/stores/useThemeStore.js'
 import LinyuInput from '@/components/LinyuInput.vue'
 import { toggleDark } from '@/utils/theme.js'
@@ -154,7 +154,7 @@ const onLogin = () => {
         // })
         router.push('/')
       } else {
-        showToast(res.msg, true)
+        showToast(res.message, true)
       }
     })
     .catch((res) => {
@@ -185,15 +185,25 @@ function GetQuery(e) {
     );
   }
 
-
-  setTimeout( () => {
-    if(GetQuery('auth_code')){
-      localStorage.setItem('x-token',GetQuery('auth_code'))
-       fetchUserInfo()
-      
-        router.push('/')
-    }
-  },800);
+onMounted(async () => {
+  console.log(route.query, 'route',route.query.auth_code ,'mdfk')
+  if (route.query.auth_code) {
+    showToast('登录中')
+    localStorage.setItem('x-token', route.query.auth_code)
+    setTimeout(() => {
+      LoginApi.getUserInfo({},true).then((res) => {
+        if (res.code === 200) {
+          console.log(res.data)
+          userInfoStore.setUserInfo({
+            ...res.data
+          })
+          router.push('/')
+        }
+      })
+    }, 1000)
+  }
+})
+  
 </script>
 
 <style lang="less" scoped>

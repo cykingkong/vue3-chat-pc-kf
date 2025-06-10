@@ -17,6 +17,7 @@
       v-else-if="isImage && imageUrl"
       :src="imageUrl"
       mode="widthFixed"
+      class="max-h-[40px]"
     />
   </div>
 
