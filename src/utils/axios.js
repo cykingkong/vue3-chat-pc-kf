@@ -6,7 +6,7 @@ export { SERVICE_URL }
 console.log(SERVICE_URL, 'SERVICE_URL')
 // request 请求之前
 axios.interceptors.request.use((config) => {
-  config.headers['Authorization'] = `Bearer ${localStorage.getItem('x-token')}`
+  config.headers['Authorization'] = `Bearer ${sessionStorage.getItem('x-token')}`
   return config
 })
 

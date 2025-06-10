@@ -27,7 +27,7 @@ const globalStore = useGlobalStore()
 const userInfoStore = useUserInfoStore()
 const router = useRouter()
 const handlerLogout = () => {
-  localStorage.removeItem('x-token')
+  sessionStorage.removeItem('x-token')
   userInfoStore.clearUserInfo()
   ws.disConnect()
   router.push('/login')

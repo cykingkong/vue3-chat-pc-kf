@@ -151,7 +151,7 @@
             <div class="flex items-center">
               <linyu-avatar :info="{ avatar: userInfoStore.avatar }" size="40px" class="mr-[5px] cursor-pointer"
                 @click="modifyUserInfoIsOpen = true" v-if="userInfoStore && userInfoStore.avatar" />
-              <div class="user-name">{{ userInfoStore.nickname }}</div>
+              <div class="user-name">{{ userInfoStore.nickname }}({{ userInfoStore.account }})</div>
             </div>
             <div class="flex">
               <linyu-icon-button v-if="themeStore.theme === 'light'" @click="(e) => toggleDark(e, 'dark')"
@@ -639,7 +639,16 @@ const handlerSendFile = async (event) => {
   if (files && files.length > 0) {
     const formData = new FormData();
     formData.append('file', files[0]);
-    const { data } = await FileApi.invite(formData)
+    const { data,code } = await FileApi.invite(formData)
+    if(code != 200){
+      showToast('文件上传失败~', true)
+
+      return 
+    }
+    if(!data.url){
+      showToast('文件上传失败~', true)
+      return
+    }
     uploadImageUrl.value = data.url || ''
     let sendParams = {
       "action": "KfSendMsg",
@@ -736,7 +745,7 @@ const handleClickTranslate = async () => {
 await fetch(`${import.meta.env.VITE_HTTP_URL}kfapi/chat/translate?${params}`, {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('x-token')}`,
+      'Authorization': `Bearer ${sessionStorage.getItem('x-token')}`,
       'Accept': 'text/event-stream'
     },
 
@@ -949,7 +958,7 @@ onMounted(async () => {
   EventBus.on('on-reload-list', reloadList)
   EventBus.on('on-receive-video', handlerVideoMsg)
   EventBus.on('on-receive-file', handlerFileMsg)
-  ws.connect(localStorage.getItem('x-token'))
+  ws.connect(sessionStorage.getItem('x-token'))
 
   if (chatShowAreaRef.value) {
     chatShowAreaRef.value.addEventListener('scroll', handleScroll)
@@ -1166,7 +1175,7 @@ const closeMask = () => {
 
 //退出登录
 const handlerLogout = () => {
-  localStorage.removeItem('x-token')
+  sessionStorage.removeItem('x-token')
   userInfoStore.clearUserInfo()
   ws.disConnect()
   router.push('/login')
@@ -1189,7 +1198,9 @@ const handlerSubmitMsg = () => {
   }
   console.log(msgContent, msg, msgInputRef.value.getNodeList(), 'ffff')
   onSendMsg(msg)
+
 }
+
 
 //发送消息
 const onSendMsg = (msg) => {
@@ -1242,9 +1253,19 @@ const onSendMsg = (msg) => {
   //     isSendLoading.value = false
   //     clearTimeout(time)
   //   })
+   // 添加置顶逻辑
+  if (targetId.value && privateChatList.value.length > 0) {
+    const currentIndex = privateChatList.value.findIndex(item => item.user.uuId === targetId.value)
+    if (currentIndex > 0) {
+      // 如果当前聊天不在第一位，则将其移动到顶部
+      const currentChat = privateChatList.value.splice(currentIndex, 1)[0]
+      currentChat.lastMessage = str.join('') || {}
+      privateChatList.value.unshift(currentChat)
+    }
+  }
+  
   msgContent.value = ''
   msgStore.referenceMsg = null
-
 }
 
 //删除私聊列表内容
@@ -1325,9 +1346,13 @@ const handleClickType = (e) => {
   targetId.value = null
   onGetPrivateChatList()
 }
+const listLoading = ref(false)
 const handleClickListItem = (item) => {
+  if(isLoading.value) return
   page.value = 1
-  if (item.unreadCount) {
+  listLoading.value = true
+  try{
+if (item.unreadCount) {
     item.unreadCount = 0
   }
   if (listType.value == 1) {
@@ -1345,6 +1370,17 @@ const handleClickListItem = (item) => {
     ws.send(JSON.stringify(cutInParams))
     handleClickType({ value: 1 })
   }
+  listLoading.value = false
+
+  }catch(error){
+    console.log(error,'error')
+  listLoading.value = false
+
+  }finally{
+    listLoading.value = false
+  }
+  
+  listLoading.value = false
 }
 
 //获取私聊列表

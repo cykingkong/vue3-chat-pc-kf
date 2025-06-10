@@ -20,7 +20,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async(to, from, next) => {
-  let token = window.localStorage.getItem('x-token')
+  let token = window.sessionStorage.getItem('x-token')
  console.log(token,'asdlkajs',window)
   // if (!token) {
   //   next({ path: '/login' })

@@ -34,7 +34,7 @@ function response(event) {
           break
         }
         case 'KfLogin': {
-          localStorage.setItem('kfUuid',wsContent.data.uuId)
+          sessionStorage.setItem('kfUuid',wsContent.data.uuId)
           EventBus.emit('on-receive-notify', wsContent.data)
           break
         }
@@ -80,7 +80,7 @@ function connect(tokenStr) {
       let kfLogingParams = {
         action: 'KfLogin',
         params: {
-          token: `${localStorage.getItem('x-token')}`,
+          token: `${sessionStorage.getItem('x-token')}`,
         }
       }
       if(ws){
@@ -108,7 +108,7 @@ const sendHeartPack = () => {
     send(JSON.stringify({
       "action": "Ping",
       "params": {
-          "uuId": localStorage.getItem('kfUuid')||''
+          "uuId": sessionStorage.getItem('kfUuid')||''
       }
   }))
   },5000)

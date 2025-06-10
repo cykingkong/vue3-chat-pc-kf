@@ -115,7 +115,7 @@ const onVerifyPassword = async () => {
   // LoginApi.verify({ password: encryptedPassword })
   //   .then((res) => {
   //     if (res.code === 0) {
-  //       localStorage.setItem('x-token', res.data)
+  //       sessionStorage.setItem('x-token', res.data)
   //       isVerifySuccess.value = true
   //     } else {
   //       showToast(res.msg, true)
@@ -144,7 +144,7 @@ const onLogin = () => {
   LoginApi.login({ username: username.value, password: password.value })
     .then(async (res) => {
       if (res.code === 200) {
-        localStorage.setItem('x-token', res.data.token)
+        sessionStorage.setItem('x-token', res.data.token)
         await fetchUserInfo()
         // userInfoStore.setUserInfo({
         //   userId: res.data.userId,
@@ -189,7 +189,7 @@ onMounted(async () => {
   console.log(route.query, 'route',route.query.auth_code ,'mdfk')
   if (route.query.auth_code) {
     showToast('登录中')
-    localStorage.setItem('x-token', route.query.auth_code)
+    sessionStorage.setItem('x-token', route.query.auth_code)
     setTimeout(() => {
       LoginApi.getUserInfo({},true).then((res) => {
         if (res.code === 200) {
